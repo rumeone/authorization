@@ -1,24 +1,22 @@
 require('dotenv').config();
 const express = require('express');
-const sequelize = require('./db');
-
-const PORT = process.env.PORT || 5000;
 const app = express();
+const sequelize = require('./db');
+const models = require('./models/models');
+const router = require('./routes/index');
 
-app.get('/', (req, res) => {
-    res.send("Test");
-});
-
+app.use(express.json());
+app.use('/api', router);
 
 const start = async () => {
     try {
         await sequelize.authenticate();
-        await sequelize.sync({alter: true});
-        app.listen(PORT, () => {
-            console.log(`Server has been started on port: ${PORT}`);
-        })
+        await sequelize.sync({ alter: true });
+        app.listen(process.env.PORT, () => {
+            console.log(`Server has been started on port: ${process.env.PORT}`);
+        });
     } catch (e) {
-        console.log(e.message);
+        console.log(e);
     }
 };
 
