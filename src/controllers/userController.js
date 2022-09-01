@@ -31,6 +31,28 @@ class UserController {
             res.status(400).json({message: 'Registration error'});
         }
     }
+
+    async login(req,res) {
+        try {
+            const {email, password} = req.body;
+            if(!email || !password) {
+                return res.status(400).json("Email or password is empty");
+            }
+            const user = await User.findOne({where: {email}});
+            if(!user) {
+                return res.status(400).json({message: 'User is not found'});
+            }
+            const comparePassword = bcrypt.compare(password, user.password);
+            if(!comparePassword) {
+                return res.status(400).json({message: 'Passwords is not compare'});
+            }
+            const token = generateJwt(user.id, user.email);
+            return res.json({token});
+        } catch (e) {
+            console.log(e.message);
+            res.status(400).json({message: 'Login error'});
+        }
+    }
 }
 
 module.exports = new UserController();
