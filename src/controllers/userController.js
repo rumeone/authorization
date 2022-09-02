@@ -36,21 +36,30 @@ class UserController {
         try {
             const {email, password} = req.body;
             if(!email || !password) {
-                return res.status(400).json("Email or password is empty");
+                return res.status(400).json({message: 'Error or password is empty'});
             }
-            const user = await User.findOne({where: {email}});
+            const user = await User.findOne({where: email});
             if(!user) {
                 return res.status(400).json({message: 'User is not found'});
             }
-            const comparePassword = bcrypt.compare(password, user.password);
+            const comparePassword = bcrypt.compareSync(password, user.password);
             if(!comparePassword) {
-                return res.status(400).json({message: 'Passwords is not compare'});
+                return res.status(400).json({message: 'Password is not compare'});
             }
             const token = generateJwt(user.id, user.email);
             return res.json({token});
         } catch (e) {
             console.log(e.message);
             res.status(400).json({message: 'Login error'});
+        }
+    }
+
+    async findAll(req,res) {
+        try {
+            const users = await User.findAll();
+             return res.json({users});
+        } catch (e) {
+            console.log(e.message);
         }
     }
 }
