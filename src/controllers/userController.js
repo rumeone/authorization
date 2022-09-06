@@ -38,7 +38,7 @@ class UserController {
             if(!email || !password) {
                 return res.status(400).json({message: 'Error or password is empty'});
             }
-            const user = await User.findOne({where: email});
+            const user = await User.findOne({where: {email}});
             if(!user) {
                 return res.status(400).json({message: 'User is not found'});
             }
@@ -59,9 +59,24 @@ class UserController {
             const users = await User.findAll();
              return res.json({users});
         } catch (e) {
+            return res.status(400).json({message: 'Users is empty'});
+        }
+    }
+
+    async findOne(req,res) {
+        try {
+            const {id} = req.body;
+            console.log(id);
+            const user = await User.findByPk(id);
+            if(!user) {
+                return res.status(400).json({message: 'User does not exist'});
+            }
+            return res.json({user});
+        } catch (e) {
             console.log(e.message);
         }
     }
 }
+
 
 module.exports = new UserController();
