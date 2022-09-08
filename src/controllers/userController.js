@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {User} = require('../models/models');
+const {Post} = require('../models/models');
 
 const generateJwt = (id, email) => {
     return jwt.sign(
@@ -72,6 +73,21 @@ class UserController {
                 return res.status(400).json({message: 'User does not exist'});
             }
             return res.json({user});
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
+
+    async createPost(req,res) {
+        try {
+            const {author} = await User.findOne({where: {email}});
+            console.log(author);
+            const {title, content} = req.body;
+            /*if(!title || !content) {
+                return res.status(400).json({message: 'Title or content cannot be empty'});
+            }
+            const post = await Post.create({})*/
+            return res.json({message: 'All right'});
         } catch (e) {
             console.log(e.message);
         }
