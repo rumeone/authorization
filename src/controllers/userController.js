@@ -80,14 +80,13 @@ class UserController {
 
     async createPost(req,res) {
         try {
-            const {author} = await User.findOne({where: {email}});
-            console.log(author);
+            const author = (jwt.decode(req.headers.authorization.split(' ')[1]).email);
             const {title, content} = req.body;
-            /*if(!title || !content) {
+            if(!title || !content) {
                 return res.status(400).json({message: 'Title or content cannot be empty'});
             }
-            const post = await Post.create({})*/
-            return res.json({message: 'All right'});
+            const post = await Post.create({author, title, content})
+            return res.json({post});
         } catch (e) {
             console.log(e.message);
         }
